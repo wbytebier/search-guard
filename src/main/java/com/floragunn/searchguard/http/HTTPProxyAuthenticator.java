@@ -49,17 +49,19 @@ public class HTTPProxyAuthenticator implements HTTPAuthenticator {
         
         final String userHeader = settings.get("user_header");
         final String rolesHeader = settings.get("roles_header");
+        final String rolesSeparator = settings.get("roles_separator");
 
         log.debug("headers {}", request.headers());
         log.debug("userHeader {}, value {}", userHeader, userHeader == null?null:request.header(userHeader));
         log.debug("rolesHeader {}, value {}", rolesHeader, rolesHeader == null?null:request.header(rolesHeader));
+        log.debug("rolesSeparator {}, value {}", rolesSeparator, rolesSeparator == null?null:request.header(rolesSeparator));
 
         if (!Strings.isNullOrEmpty(userHeader) && !Strings.isNullOrEmpty((String) request.header(userHeader))) {
 
             String[] backendRoles = null;
 
             if (!Strings.isNullOrEmpty(rolesHeader) && !Strings.isNullOrEmpty((String) request.header(rolesHeader))) {
-                backendRoles = ((String) request.header(rolesHeader)).split(",");
+                backendRoles = ((String) request.header(rolesHeader)).split(rolesSeparator);
             }
             return new AuthCredentials((String) request.header(userHeader), backendRoles).markComplete();
         } else {
